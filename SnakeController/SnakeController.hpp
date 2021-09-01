@@ -6,6 +6,7 @@
 
 #include "IEventHandler.hpp"
 #include "SnakeInterface.hpp"
+#include "EventT.hpp"
 
 class Event;
 class IPort;
@@ -33,12 +34,21 @@ public:
     void receive(std::unique_ptr<Event> e) override;
 
 private:
+    
     struct Segment
     {
         int x;
         int y;
         int ttl;
     };
+
+    Segment getNewHead(const Segment &currentHead);
+    bool foodEated(const Segment &newHead);
+    bool checkIfFoodEatedAndIfWallCollision(Segment &newHead);
+    void checkForFoodCollision(FoodInd & receivedFood);
+    void CheckForRequestedFoodCollision(FoodResp &requestedFood);
+    void handleBadCastError(std::unique_ptr<Event> e);
+    bool checkIfHeadInBody(Segment &newHead);
 
     IPort& m_displayPort;
     IPort& m_foodPort;
