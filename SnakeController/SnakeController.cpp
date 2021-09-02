@@ -36,16 +36,16 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
         istr >> d;
         switch (d) {
             case 'U':
-                m_currentDirection = Direction_UP;
+                segments.m_currentDirection = Direction_UP;
                 break;
             case 'D':
-                m_currentDirection = Direction_DOWN;
+                segments.m_currentDirection = Direction_DOWN;
                 break;
             case 'L':
-                m_currentDirection = Direction_LEFT;
+                segments.m_currentDirection = Direction_LEFT;
                 break;
             case 'R':
-                m_currentDirection = Direction_RIGHT;
+                segments.m_currentDirection = Direction_RIGHT;
                 break;
             default:
                 throw ConfigurationError();
@@ -55,18 +55,19 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
         while (length--) {
             Segment seg;
             istr >> seg.x >> seg.y;
-            m_segments.push_back(seg);
+            segments.m_segments.push_back(seg);
         }
     } else {
         throw ConfigurationError();
     }
 }
 
-bool Controller::isSegmentAtPosition(int x, int y) const
+bool Segments::isSegmentAtPosition(int x, int y) const
 {
     return m_segments.end() !=  std::find_if(m_segments.cbegin(), m_segments.cend(),
         [x, y](auto const& segment){ return segment.x == x and segment.y == y; });
 }
+
 
 bool Controller::isPositionOutsideMap(int x, int y) const
 {
@@ -119,7 +120,7 @@ bool perpendicular(Direction dir1, Direction dir2)
 }
 } // namespace
 
-Segment Controller::calculateNewHead() const
+Segment Segments::calculateNewHead() const
 {
     Segment const& currentHead = m_segments.front();
 
@@ -130,7 +131,7 @@ Segment Controller::calculateNewHead() const
     return newHead;
 }
 
-void Controller::removeTailSegment()
+void Segments::removeTailSegment()
 {
     auto tail = m_segments.back();
 
@@ -143,7 +144,7 @@ void Controller::removeTailSegment()
     m_segments.pop_back();
 }
 
-void Controller::addHeadSegment(Segment const& newHead)
+void Segments::addHeadSegment(Segment const& newHead)
 {
     m_segments.push_front(newHead);
 
@@ -155,7 +156,7 @@ void Controller::addHeadSegment(Segment const& newHead)
     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewHead));
 }
 
-void Controller::removeTailSegmentIfNotScored(Segment const& newHead)
+void Segments::removeTailSegmentIfNotScored(Segment const& newHead, std::pair<int, int> const& m_foodPosition)
 {
     if (std::make_pair(newHead.x, newHead.y) == m_foodPosition) {
         m_scorePort.send(std::make_unique<EventT<ScoreInd>>());
@@ -165,33 +166,33 @@ void Controller::removeTailSegmentIfNotScored(Segment const& newHead)
     }
 }
 
-void Controller::updateSegmentsIfSuccessfullMove(Segment const& newHead)
+void Segments::updateSegmentsIfSuccessfullMove(Segment const& newHead, std::pair<int, int> const& m_foodPosition)
 {
-    if (isSegmentAtPosition(newHead.x, newHead.y) or isPositionOutsideMap(newHead.x, newHead.y)) {
+    if (isSegmentAtPosition(newHead.x, newHead.y) or Controller::isPositionOutsideMap(newHead.x, newHead.y)) {
         m_scorePort.send(std::make_unique<EventT<LooseInd>>());
     } else {
         addHeadSegment(newHead);
-        removeTailSegmentIfNotScored(newHead);
+        removeTailSegmentIfNotScored(newHead, m_foodPosition);
     }
 }
 
 void Controller::handleTimeoutInd()
 {
-    updateSegmentsIfSuccessfullMove(calculateNewHead());
+    segments.updateSegmentsIfSuccessfullMove(segments.calculateNewHead(), m_foodPosition);
 }
 
 void Controller::handleDirectionInd(std::unique_ptr<Event> e)
 {
     auto direction = payload<DirectionInd>(*e).direction;
 
-    if (perpendicular(m_currentDirection, direction)) {
-        m_currentDirection = direction;
+    if (perpendicular(segments.m_currentDirection, direction)) {
+        segments.m_currentDirection = direction;
     }
 }
 
 void Controller::updateFoodPosition(int x, int y, std::function<void()> clearPolicy)
 {
-    if (isSegmentAtPosition(x, y) || isPositionOutsideMap(x,y)) {
+    if (segments.isSegmentAtPosition(x, y) || isPositionOutsideMap(x,y)) {
         m_foodPort.send(std::make_unique<EventT<FoodReq>>());
         return;
     }

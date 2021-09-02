@@ -9,6 +9,9 @@
 #include "SnakeInterface.hpp"
 
 #include "Segment.hpp"
+//#include "Segments.hpp"
+
+
 
 class Event;
 class IPort;
@@ -23,6 +26,25 @@ struct ConfigurationError : std::logic_error
 struct UnexpectedEventException : std::runtime_error
 {
     UnexpectedEventException();
+};
+
+class Segments
+{
+public:
+    Segments(IPort& m_displayPort, IPort& m_foodPort, IPort& m_scorePort)
+        : m_displayPort(m_displayPort), m_foodPort(m_foodPort), m_scorePort(m_scorePort){};
+    Direction m_currentDirection;
+    std::list<Segment> m_segments;
+    bool isSegmentAtPosition(int x, int y) const;
+    Segment calculateNewHead() const;
+    void updateSegmentsIfSuccessfullMove(Segment const& newHead, std::pair<int, int> const& m_foodPosition);
+    void addHeadSegment(Segment const& newHead);
+    void removeTailSegmentIfNotScored(Segment const& newHead, std::pair<int, int> const& m_foodPosition);
+    void removeTailSegment();
+private:
+    IPort& m_displayPort;
+    IPort& m_foodPort;
+    IPort& m_scorePort;
 };
 
 class Controller : public IEventHandler
@@ -43,10 +65,8 @@ private:
     std::pair<int, int> m_mapDimension;
     std::pair<int, int> m_foodPosition;
 
-
-
-    std::list<Segment> m_segments;
-    Direction m_currentDirection;
+    Segments segments = Segments(m_displayPort, m_foodPort, m_scorePort);
+    
 
     void handleTimeoutInd();
     void handleDirectionInd(std::unique_ptr<Event>);
@@ -54,12 +74,6 @@ private:
     void handleFoodResp(std::unique_ptr<Event>);
     void handlePauseInd(std::unique_ptr<Event>);
 
-    bool isSegmentAtPosition(int x, int y) const;
-    Segment calculateNewHead() const;
-    void updateSegmentsIfSuccessfullMove(Segment const& newHead);
-    void addHeadSegment(Segment const& newHead);
-    void removeTailSegmentIfNotScored(Segment const& newHead);
-    void removeTailSegment();
 
     bool isPositionOutsideMap(int x, int y) const;
 

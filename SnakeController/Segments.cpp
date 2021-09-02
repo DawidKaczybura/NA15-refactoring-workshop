@@ -1,4 +1,5 @@
 #include "Segments.hpp"
+#include <algorithm>
 
 bool Segments::isSegmentAtPosition(int x, int y) const
 {
