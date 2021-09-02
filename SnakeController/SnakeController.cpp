@@ -81,9 +81,9 @@ bool World::isPositionOutsideMap(int x, int y) const
     return x < 0 or y < 0 or x >= m_mapDimension.first or y >= m_mapDimension.second;
 }
 
-void Controller::sendPlaceNewFood(int x, int y)
+void World::sendPlaceNewFood(int x, int y)
 {
-    world.setFoodPosition(std::make_pair(x, y));
+    setFoodPosition(std::make_pair(x, y));
 
     DisplayInd placeNewFood;
     placeNewFood.x = x;
@@ -199,9 +199,9 @@ void Controller::handleDirectionInd(std::unique_ptr<Event> e)
     }
 }
 
-void Controller::updateFoodPosition(int x, int y, std::function<void()> clearPolicy)
+void World::updateFoodPosition(int x, int y, std::function<void()> clearPolicy, bool isSegmentAtPosition)
 {
-    if (segments.isSegmentAtPosition(x, y) || world.isPositionOutsideMap(x,y)) {
+    if (isSegmentAtPosition || isPositionOutsideMap(x,y)) {
         m_foodPort.send(std::make_unique<EventT<FoodReq>>());
         return;
     }
@@ -210,18 +210,18 @@ void Controller::updateFoodPosition(int x, int y, std::function<void()> clearPol
     sendPlaceNewFood(x, y);
 }
 
-void Controller::handleFoodInd(std::unique_ptr<Event> e, World world)
+void Controller::handleFoodInd(std::unique_ptr<Event> e, World &world)
 {
     auto receivedFood = payload<FoodInd>(*e);
-
-    updateFoodPosition(receivedFood.x, receivedFood.y, std::bind(&World::sendClearOldFood, world));
+    world.updateFoodPosition(receivedFood.x, receivedFood.y, std::bind(&World::sendClearOldFood, world), segments.isSegmentAtPosition(receivedFood.x, receivedFood.y));
+    
 }
 
 void Controller::handleFoodResp(std::unique_ptr<Event> e)
 {
     auto requestedFood = payload<FoodResp>(*e);
 
-    updateFoodPosition(requestedFood.x, requestedFood.y, []{});
+    world.updateFoodPosition(requestedFood.x, requestedFood.y, []{}, segments.isSegmentAtPosition(requestedFood.x, requestedFood.y));
 }
 
 void Controller::handlePauseInd(std::unique_ptr<Event> e)
