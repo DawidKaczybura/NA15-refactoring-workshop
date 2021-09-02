@@ -28,6 +28,22 @@ struct UnexpectedEventException : std::runtime_error
     UnexpectedEventException();
 };
 
+class World
+{
+public:
+    World(IPort& m_displayPort):m_displayPort(m_displayPort){};
+    void setMapDimension(std::pair<int, int> m_mapDimension);
+    void setFoodPosition(std::pair<int,int> m_foodPosition);
+    std::pair<int, int> getFoodPosition();
+    bool isPositionOutsideMap(int x, int y) const;
+    void sendClearOldFood();
+    
+private:
+    std::pair<int, int> m_mapDimension;
+    std::pair<int, int> m_foodPosition;
+    IPort& m_displayPort;
+};
+
 class Segments
 {
 public:
@@ -37,7 +53,7 @@ public:
     std::list<Segment> m_segments;
     bool isSegmentAtPosition(int x, int y) const;
     Segment calculateNewHead() const;
-    void updateSegmentsIfSuccessfullMove(Segment const& newHead, std::pair<int, int> const& m_foodPosition);
+    void updateSegmentsIfSuccessfullMove(Segment const& newHead, World &world);
     void addHeadSegment(Segment const& newHead);
     void removeTailSegmentIfNotScored(Segment const& newHead, std::pair<int, int> const& m_foodPosition);
     void removeTailSegment();
@@ -62,23 +78,18 @@ private:
     IPort& m_foodPort;
     IPort& m_scorePort;
 
-    std::pair<int, int> m_mapDimension;
-    std::pair<int, int> m_foodPosition;
-
     Segments segments = Segments(m_displayPort, m_foodPort, m_scorePort);
+    World world = World(m_displayPort);
     
 
     void handleTimeoutInd();
     void handleDirectionInd(std::unique_ptr<Event>);
-    void handleFoodInd(std::unique_ptr<Event>);
+    void handleFoodInd(std::unique_ptr<Event>, World world);
     void handleFoodResp(std::unique_ptr<Event>);
     void handlePauseInd(std::unique_ptr<Event>);
 
-
-    bool isPositionOutsideMap(int x, int y) const;
-
     void updateFoodPosition(int x, int y, std::function<void()> clearPolicy);
-    void sendClearOldFood();
+    //void sendClearOldFood();
     void sendPlaceNewFood(int x, int y);
 
     bool m_paused;
