@@ -218,18 +218,19 @@ void Controller::receive(std::unique_ptr<Event> e)
     switch(e->getMessageId())
     {
         case TimeoutInd::MESSAGE_ID:
-            handleTimePassed(TimeoutInd());
+            handleTimePassed(*static_cast<EventT<TimeoutInd> const&>(*e));
             break;
         case DirectionInd::MESSAGE_ID:
-            handleDirectionChange(DirectionInd());
+            handleDirectionChange(*static_cast<EventT<DirectionInd> const&>(*e));
             break;
         case FoodInd::MESSAGE_ID:
-            handleFoodPositionChange(FoodInd());
+            handleFoodPositionChange(*static_cast<EventT<FoodInd> const&>(*e));
             break;
         case FoodResp::MESSAGE_ID:
-            handleNewFood(FoodResp());
+            handleNewFood(*static_cast<EventT<FoodResp> const&>(*e));
             break;
-
+        default:
+            throw UnexpectedEventException();
     }
     /*
     try {
