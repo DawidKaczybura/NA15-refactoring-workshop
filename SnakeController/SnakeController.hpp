@@ -10,8 +10,7 @@
 
 #include "Segment.hpp"
 #include "World.hpp"
-//#include "Segments.hpp"
-
+#include "Segments.hpp"
 
 
 class Event;
@@ -28,49 +27,8 @@ struct UnexpectedEventException : std::runtime_error
 {
     UnexpectedEventException();
 };
-/*
-class World
-{
-public:
-    World(IPort& m_displayPort, IPort& m_foodPort)
-        :m_displayPort(m_displayPort), m_foodPort(m_foodPort){};
 
-    void setMapDimension(std::pair<int, int> m_mapDimension);
-    void setFoodPosition(std::pair<int,int> m_foodPosition);
-    std::pair<int, int> getFoodPosition();
 
-    bool isPositionOutsideMap(int x, int y) const;
-    void sendClearOldFood();
-    
-    void sendPlaceNewFood(int x, int y);
-    void updateFoodPosition(int x, int y, std::function<void()> clearPolicy, bool isSegmentAtPosition);
-    
-private:
-
-    std::pair<int, int> m_mapDimension;
-    std::pair<int, int> m_foodPosition;
-    IPort& m_displayPort;
-    IPort& m_foodPort;
-};
-*/
-class Segments
-{
-public:
-    Segments(IPort& m_displayPort, IPort& m_foodPort, IPort& m_scorePort)
-        : m_displayPort(m_displayPort), m_foodPort(m_foodPort), m_scorePort(m_scorePort){};
-    Direction m_currentDirection;
-    std::list<Segment> m_segments;
-    bool isSegmentAtPosition(int x, int y) const;
-    Segment calculateNewHead() const;
-    void updateSegmentsIfSuccessfullMove(Segment const& newHead, World &world);
-    void addHeadSegment(Segment const& newHead);
-    void removeTailSegmentIfNotScored(Segment const& newHead, std::pair<int, int> const& m_foodPosition);
-    void removeTailSegment();
-private:
-    IPort& m_displayPort;
-    IPort& m_foodPort;
-    IPort& m_scorePort;
-};
 
 class Controller : public IEventHandler
 {

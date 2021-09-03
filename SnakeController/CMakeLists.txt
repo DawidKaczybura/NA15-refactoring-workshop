@@ -5,9 +5,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(SNAKE_SOURCES
     SnakeController.cpp
     World.cpp
+    Segments.cpp
 )
 set(SNAKE_HEADERS
     World.hpp
+    Segments.hpp
     SnakeController.hpp
     SnakeInterface.hpp
 )
