@@ -27,13 +27,6 @@ bool checkControl(std::istream& istr, char control)
     return input == control;
 }
 
-Dimension readWorldDimension(std::istream& istr)
-{
-    Dimension dimension;
-    istr >> dimension.width >> dimension.height;
-    return dimension;
-}
-
 Position readFoodPosition(std::istream& istr)
 {
     if (not checkControl(istr, 'F')) {
@@ -51,7 +44,7 @@ std::unique_ptr<World> readWorld(std::istream& istr)
         throw ConfigurationError();
     }
 
-    auto worldDimension = readWorldDimension(istr);
+    auto worldDimension = Dimension::readWorldDimension(istr);
     auto foodPosition = readFoodPosition(istr);
     return std::make_unique<World>(worldDimension, foodPosition);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include "SnakePosition.hpp"
 
 namespace Snake
@@ -15,6 +16,14 @@ struct Dimension
         return positiveLessThan(position.x, width)
             and positiveLessThan(position.y, height);
     }
+
+    static Dimension readWorldDimension(std::istream& istr)
+    {
+        Dimension dimension;
+        istr >> dimension.width >> dimension.height;
+        return dimension;
+    }
+
 private:
     bool positiveLessThan(int value, int max) const
     {
