@@ -61,26 +61,25 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
         throw ConfigurationError();
     }
 }
-
+/*
 void World::setMapDimension(std::pair<int, int> m_mapDimension_){
     m_mapDimension = m_mapDimension_;
 }
 void World::setFoodPosition(std::pair<int,int> m_foodPosition_){
     m_foodPosition = m_foodPosition_;
 }
-
+*/
 bool Segments::isSegmentAtPosition(int x, int y) const
 {
     return m_segments.end() !=  std::find_if(m_segments.cbegin(), m_segments.cend(),
         [x, y](auto const& segment){ return segment.x == x and segment.y == y; });
 }
 
-
+/*
 bool World::isPositionOutsideMap(int x, int y) const
 {
     return x < 0 or y < 0 or x >= m_mapDimension.first or y >= m_mapDimension.second;
 }
-
 void World::sendPlaceNewFood(int x, int y)
 {
     setFoodPosition(std::make_pair(x, y));
@@ -102,7 +101,7 @@ void World::sendClearOldFood()
 
     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
 }
-
+*/
 namespace
 {
 bool isHorizontal(Direction direction)
@@ -172,9 +171,13 @@ void Segments::removeTailSegmentIfNotScored(Segment const& newHead, std::pair<in
         removeTailSegment();
     }
 }
+
+/*
 std::pair<int, int> World::getFoodPosition(){
     return m_foodPosition;
 }
+*/
+
 void Segments::updateSegmentsIfSuccessfullMove(Segment const& newHead, World &world)
 {
     if (isSegmentAtPosition(newHead.x, newHead.y) or world.isPositionOutsideMap(newHead.x, newHead.y)) {
@@ -198,7 +201,7 @@ void Controller::handleDirectionInd(std::unique_ptr<Event> e)
         segments.m_currentDirection = direction;
     }
 }
-
+/*
 void World::updateFoodPosition(int x, int y, std::function<void()> clearPolicy, bool isSegmentAtPosition)
 {
     if (isSegmentAtPosition || isPositionOutsideMap(x,y)) {
@@ -209,7 +212,7 @@ void World::updateFoodPosition(int x, int y, std::function<void()> clearPolicy, 
     clearPolicy();
     sendPlaceNewFood(x, y);
 }
-
+*/
 void Controller::handleFoodInd(std::unique_ptr<Event> e, World &world)
 {
     auto receivedFood = payload<FoodInd>(*e);

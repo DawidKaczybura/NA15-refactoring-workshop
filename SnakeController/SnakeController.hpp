@@ -9,6 +9,7 @@
 #include "SnakeInterface.hpp"
 
 #include "Segment.hpp"
+#include "World.hpp"
 //#include "Segments.hpp"
 
 
@@ -27,7 +28,7 @@ struct UnexpectedEventException : std::runtime_error
 {
     UnexpectedEventException();
 };
-
+/*
 class World
 {
 public:
@@ -51,7 +52,7 @@ private:
     IPort& m_displayPort;
     IPort& m_foodPort;
 };
-
+*/
 class Segments
 {
 public:
