@@ -1,6 +1,10 @@
 #pragma once
 
 #include <utility>
+#include "SnakeDimension.hpp"
+#include "SnakeFoodPosition.hpp"
+#include "SnakePosition.hpp"
+
 
 namespace Snake
 {
@@ -8,16 +12,17 @@ namespace Snake
 class World
 {
 public:
-    World(std::pair<int, int> dimension, std::pair<int, int> food);
+    //World(SnakeDimension dimension, std::pair<int, int> food);
+    World(SnakeDimension dimension, FoodPosition food);
 
     void setFoodPosition(std::pair<int, int> position);
-    std::pair<int, int> getFoodPosition() const;
+    FoodPosition getFoodPosition() const;
 
-    bool contains(int x, int y) const;
+    bool contains(Position position) const;
 
 private:
-    std::pair<int, int> m_foodPosition;
-    std::pair<int, int> m_dimension;
+    FoodPosition m_foodPosition;
+    SnakeDimension m_dimension;
 };
 
 } // namespace Snake

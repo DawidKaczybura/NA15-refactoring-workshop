@@ -51,7 +51,7 @@ private:
     void handleFoodResp(std::unique_ptr<Event>);
     void handlePauseInd(std::unique_ptr<Event>);
 
-    void updateSegmentsIfSuccessfullMove(int x, int y);
+    void updateSegmentsIfSuccessfullMove(Position position);
     void addHeadSegment(int x, int y);
     void removeTailSegmentIfNotScored(int x, int y);
     void removeTailSegment();
