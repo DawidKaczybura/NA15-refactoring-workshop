@@ -19,13 +19,17 @@ bool isPositive(Snake::Direction direction)
     return (isVertical(direction) and Snake::Direction_DOWN == direction)
         or (isHorizontal(direction) and Snake::Direction_RIGHT == direction);
 }
-
-bool perpendicular(Snake::Direction dir1, Snake::Direction dir2)
-{
-    return isHorizontal(dir1) == isVertical(dir2);
-}
 } // namespace
 
+void Segments::setCurrentDirection(Snake::Direction newDirection)
+{
+    m_currentDirection = newDirection;
+}
+
+Snake::Direction Segments::getCurrentDirection()
+{
+    return m_currentDirection;
+}
 
 bool Segments::isSegmentAtPosition(int x, int y) const
 {

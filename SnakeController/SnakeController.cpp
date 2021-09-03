@@ -36,16 +36,16 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
         istr >> d;
         switch (d) {
             case 'U':
-                segments.m_currentDirection = Direction_UP;
+                segments.setCurrentDirection(Direction_UP);
                 break;
             case 'D':
-                segments.m_currentDirection = Direction_DOWN;
+                segments.setCurrentDirection(Direction_DOWN);
                 break;
             case 'L':
-                segments.m_currentDirection = Direction_LEFT;
+                segments.setCurrentDirection(Direction_LEFT);
                 break;
             case 'R':
-                segments.m_currentDirection = Direction_RIGHT;
+                segments.setCurrentDirection(Direction_RIGHT);
                 break;
             default:
                 throw ConfigurationError();
@@ -76,12 +76,6 @@ bool isVertical(Direction direction)
     return Direction_UP == direction or Direction_DOWN == direction;
 }
 
-bool isPositive(Direction direction)
-{
-    return (isVertical(direction) and Direction_DOWN == direction)
-        or (isHorizontal(direction) and Direction_RIGHT == direction);
-}
-
 bool perpendicular(Direction dir1, Direction dir2)
 {
     return isHorizontal(dir1) == isVertical(dir2);
@@ -99,8 +93,8 @@ void Controller::handleDirectionInd(std::unique_ptr<Event> e)
 {
     auto direction = payload<DirectionInd>(*e).direction;
 
-    if (perpendicular(segments.m_currentDirection, direction)) {
-        segments.m_currentDirection = direction;
+    if (perpendicular(segments.getCurrentDirection(), direction)) {
+        segments.setCurrentDirection(direction);
     }
 }
 
