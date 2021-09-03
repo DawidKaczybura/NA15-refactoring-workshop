@@ -32,10 +32,7 @@ Position readFoodPosition(std::istream& istr)
     if (not checkControl(istr, 'F')) {
         throw ConfigurationError();
     }
-
-    Position position;
-    istr >> position.x >> position.y;
-    return position;
+    return Position::readPosition(istr);
 }
 
 std::unique_ptr<World> readWorld(std::istream& istr)
@@ -86,9 +83,9 @@ Controller::Controller(IPort& displayPort, IPort& foodPort, IPort& scorePort, st
     istr >> length;
 
     while (length--) {
-        Position position;
-        istr >> position.x >> position.y;
-        m_segments->addSegment(position);
+        //Position position;
+        //istr >> position.x >> position.y;
+        m_segments->addSegment(Position::readPosition(istr));
     }
 
     if (length != -1) {
