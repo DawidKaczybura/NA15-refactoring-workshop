@@ -3,17 +3,17 @@
 namespace Snake
 {
 
-World::World(SnakeDimension dimension, FoodPosition food)
-    : m_foodPosition(food),
+World::World(SnakeDimension dimension, Position foodPosition)
+    : m_foodPosition(foodPosition),
       m_dimension(dimension)
 {}
 
-void World::setFoodPosition(std::pair<int, int> position)
+void World::setFoodPosition(Position position)
 {
-    m_foodPosition.setPosition(position);
+    m_foodPosition = position;
 }
 
-FoodPosition World::getFoodPosition() const
+Position World::getFoodPosition() const
 {
     return m_foodPosition;
 }

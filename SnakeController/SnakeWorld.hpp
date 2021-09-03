@@ -2,7 +2,6 @@
 
 #include <utility>
 #include "SnakeDimension.hpp"
-#include "SnakeFoodPosition.hpp"
 #include "SnakePosition.hpp"
 
 
@@ -12,16 +11,15 @@ namespace Snake
 class World
 {
 public:
-    //World(SnakeDimension dimension, std::pair<int, int> food);
-    World(SnakeDimension dimension, FoodPosition food);
+    World(SnakeDimension dimension, Position foodPosition);
 
-    void setFoodPosition(std::pair<int, int> position);
-    FoodPosition getFoodPosition() const;
+    void setFoodPosition(Position position);
+    Position getFoodPosition() const;
 
     bool contains(Position position) const;
 
 private:
-    FoodPosition m_foodPosition;
+    Position m_foodPosition;
     SnakeDimension m_dimension;
 };
 

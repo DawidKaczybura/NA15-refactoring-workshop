@@ -34,7 +34,7 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
     istr >> w >> width >> height >> f >> foodX >> foodY >> s;
 
     if (w == 'W' and f == 'F' and s == 'S') {
-        m_world = std::make_unique<World>(SnakeDimension {width, height}, FoodPosition {foodX, foodY});
+        m_world = std::make_unique<World>(SnakeDimension {width, height}, Position {foodX, foodY});
 
         Direction startDirection;
         istr >> d;
@@ -72,7 +72,7 @@ Controller::~Controller()
 
 void Controller::sendPlaceNewFood(int x, int y)
 {
-    m_world->setFoodPosition(std::make_pair(x, y));
+    m_world->setFoodPosition(Position {x, y});
 
     DisplayInd placeNewFood;
     placeNewFood.position.x = x;
@@ -120,7 +120,7 @@ void Controller::addHeadSegment(int x, int y)
 
 void Controller::removeTailSegmentIfNotScored(int x, int y)
 {
-    if (FoodPosition{x,y} == m_world->getFoodPosition()) {
+    if (Position{x,y} == m_world->getFoodPosition()) {
         m_scorePort.send(std::make_unique<EventT<ScoreInd>>());
         m_foodPort.send(std::make_unique<EventT<FoodReq>>());
     } else {
